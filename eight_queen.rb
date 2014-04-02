@@ -1,5 +1,5 @@
 class EightQueen
-
+  attr_reader :board
   def initialize(n)
   	@board=Array.new(n){ Array.new(n){ '*' } }
 	@history=[]
