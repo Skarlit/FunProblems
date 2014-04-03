@@ -115,10 +115,46 @@ class Player
     critical_move(board,@mark,@mark)
   end
 
+  def strategic_move(board)
+     pattern_1 = [self.mark," "," "]
+     pattern_2 = [" ",self.mark, " "]
+     pattern_3 = [" ", " ", self.mark]
+     board.checks.any? do |check|
+        if check == pattern_1
+          check[1].replace(self.mark)
+          board.remaining_move -= 1
+          break
+        end
+        if check == pattern_2
+          check[0].replace(self.mark)
+          board.remaining_move -= 1
+          break
+        end
+        if check == pattern_3
+          check[1].replace(self.mark)
+          board.remaining_move -= 1
+          break
+        end
+     end
+  end
+
+  def strategic_able?(board)
+     pattern_1 = [self.mark," "," "]
+     pattern_2 = [" ",self.mark, " "]
+     pattern_3 = [" ", " ", self.mark]
+     board.checks.any? do |check|
+        return true if check == pattern_1
+        return true if check == pattern_2
+        return true if check == pattern_3
+      end
+      return false
+  end
+
   def null_move(board)
     [[0,0],[0,2],[2,0],[2,2]].each do |pos|
       if board.empty?(pos)
         board.place_mark([pos.first,pos.last],self.mark)
+        break
       end
     end
   end
@@ -141,10 +177,12 @@ class Player
           null_move(board)
         end
     else
-      if about_to_lose?(board)
-        defensive_move(board)
-      elsif about_to_win?(board)
+      if about_to_win?(board)
         aggressive_move(board)
+      elsif about_to_lose?(board)
+        defensive_move(board)
+      #elsif strategic_able?(board)
+      # strategic_move(board)
       else
         null_move(board)
       end
@@ -191,5 +229,5 @@ end
 P1= Player.new
 P2= Player.new(true)
 
-g=Game.new(P1,P2)
+g=Game.new(P2,P1)
 g.play
