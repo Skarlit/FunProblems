@@ -15,8 +15,6 @@ class EightQueen
 	end
   end
 
-
-
   def valid?(i,j)
 	return false if j > @size - 1
 	#if diagonals valid
@@ -56,7 +54,7 @@ class EightQueen
 	return (0...@size).cover?(index)
   end
 
-  def solver(i=0,j=0)
+  def solver_recursive(i=0,j=0)
 		
 	# if i out of bound, solution is found
 	if i>=@size
@@ -68,21 +66,21 @@ class EightQueen
 	if place(i,j)
 	  save(i,j)
 	  if i < @size
-		solver(i + 1, 0)
+		solver_recursive(i + 1, 0)
 	  else
 		return true #solution
 	  end
 	#can't place but j not out of bound, advance j
 	elsif j < @size - 1
-	  solver(i,j + 1)
+	  solver_recursive(i,j + 1)
 	#j out of bound, need to backtrack 
 	else
 	  pre_i,pre_j = undo
-	  solver(pre_i,pre_j + 1)
+	  solver_recursive(pre_i,pre_j + 1)
 	end
   end
 
-  def solver_no_recurse(i = 0,j = 0)
+  def solver_non_recursive(i = 0,j = 0)
     while i != @size
 	  if place(i,j)
 		save(i,j)
@@ -112,7 +110,7 @@ class EightQueen
 
   def pp #pretty print
 	@board.each do |row|
-	  print row.join("")
+	  print row.join(" ")
 	  print "\n"
 	end
 	puts "\n"
@@ -121,10 +119,20 @@ end
 
 print "Enter board size: "
 size=gets.chomp
+puts "Non-recursive:"
 start=Time.now
 Q8= EightQueen.new(size.to_i)
-Q8.solver_no_recurse
-
+Q8.solver_non_recursive
 finish=Time.now
 
-puts "Time: #{(finish-start).to_i}s"
+puts "Time: #{(finish-start)}s"
+
+print "\n"
+
+puts "Recursive:"
+start=Time.now
+Q9= EightQueen.new(size.to_i)
+Q9.solver_recursive
+finish=Time.now
+
+puts "Time: #{(finish-start)}s"
