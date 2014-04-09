@@ -11,6 +11,8 @@ class InvalidMoveError < RuntimeError
 end
 
 class Piece
+  @@diag_delta = [Pos.new(1,1), Pos.new(1,-1), Pos.new(-1,-1), Pos.new(-1, 1)]
+  @@linear_delta = [Pos.new(0,-1), Pos.new(0,1), Pos.new(1,0), Pos.new(-1, 0)]
 
   @@visual ={
     King:   "\u265A",
@@ -54,6 +56,39 @@ class Piece
     self.pos = end_pos
   end
 
+  def moves_until_block(current_pos, delta)
+    moves = []
+    current_pos = current_pos + delta
+    while @board[current_pos] == nil 
+      moves << current_pos
+      current_pos = current_pos + delta
+    end
+    unless own_piece?(@board[current_pos]) 
+      moves << current_pos
+    end
+    return moves
+  end
+
+  def valid_diag(opts)
+    valid_diag_moves = []
+    case opts 
+    when 'sliding'
+      @@diag_delta.each {|delta| valid_diag_moves += moves_until_block(self.pos, delta)}
+    when 'step'
+      @@diag_delta.each {|delta| valid_diag_moves << self.pos + delta unless own_piece?(self.pos+delta) }
+    end
+    return valid_diag_moves
+  end
+
+  def valid_linear(opts)
+    valid_linear_moves = []
+    case opts
+    when 'sliding'
+      @@linear_delta.each {|delta| valid_linear_moves += moves_until_block(self.pos, delta)}
+    when 'step'
+      @@linear_delta.each {|delta| valid_linear_moves << self.pos + delta unless own_piece?(self.pos+delta) }
+    end
+  end
 end
 
 

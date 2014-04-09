@@ -19,35 +19,32 @@ class Board
   def size return @board.length end
 
   def make_board
-    @board = Array.new(8){Array.new(8)}
-    @board[0] = [Rook.new(:black,Pos.new(0,0),self),
-                Knight.new(:black,Pos.new(0,1),self),
-                Bishop.new(:black,Pos.new(0,2),self),
-                Queen.new(:black,Pos.new(0,3),self),
-                King.new(:black,Pos.new(0,4),self),
-                Bishop.new(:black,Pos.new(0,5),self),
-                Knight.new(:black,Pos.new(0,6),self),
-                Rook.new(:black,Pos.new(0,7),self)]
+    @black_pieces = [Rook.new(:black,Pos.new(0,0),self),
+                    Knight.new(:black,Pos.new(0,1),self),
+                    Bishop.new(:black,Pos.new(0,2),self),
+                    Queen.new(:black,Pos.new(0,3),self),
+                    King.new(:black,Pos.new(0,4),self),
+                    Bishop.new(:black,Pos.new(0,5),self),
+                    Knight.new(:black,Pos.new(0,6),self),
+                    Rook.new(:black,Pos.new(0,7),self)]
+    8.times { |i| @black_pieces << Pawn.new(:black, Pos.new(1,i), self) }
 
-    @board[1] = []
-    8.times do |i|
-      @board[1] << Pawn.new(:black, Pos.new(1,i), self)
-    end
 
-    @board[6] = []
-    8.times do |i|
-      @board[6] << Pawn.new(:white, Pos.new(6,i), self)
-    end
+    @white_pieces = [Rook.new(:white, Pos.new(7,0),self),
+                    Knight.new(:white, Pos.new(7,1),self),
+                    Bishop.new(:white, Pos.new(7,2),self),
+                    Queen.new(:white, Pos.new(7,3),self),
+                    King.new(:white, Pos.new(7,4),self),
+                    Bishop.new(:white, Pos.new(7,5),self),
+                    Knight.new(:white, Pos.new(7,6),self),
+                    Rook.new(:white, Pos.new(7,7),self)]
+    8.times { |i| @white_pieces << Pawn.new(:white, Pos.new(6,i), self) }
+  ########################PLACE PIECES ###################################
+  
+   (@black_pieces + @white_pieces).each { |piece| @board[piece.pos] = piece }
 
-    @board[7] = [Rook.new(:white, Pos.new(7,0),self),
-                Knight.new(:white, Pos.new(7,1),self),
-                Bishop.new(:white, Pos.new(7,2),self),
-                Queen.new(:white, Pos.new(7,3),self),
-                King.new(:white, Pos.new(7,4),self),
-                Bishop.new(:white, Pos.new(7,5),self),
-                Knight.new(:white, Pos.new(7,6),self),
-                Rook.new(:white, Pos.new(7,7),self)]
 
+  #######################INIT  COLOR BOARD###############################
     @board_color = Array.new(8){Array.new(8)}
     switch = false
     (0...8).each do |row|

@@ -1,6 +1,3 @@
-
-
-
 #promp input
 
 #invers(input)
