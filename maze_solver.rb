@@ -1,10 +1,18 @@
+require 'colorize'
+
 class MazeSolver
 
+  LEFT = "\u2190"
+  UP = "\u2191"
+  RIGHT = "\u2192"
+  DOWN = "\u2193"
+
+
   def initialize(filename, welcome = false)
-	@memo = Hash.new(false)
-	@maze = Maze.new(filename)
-	greet if welcome
-	@solution = []
+  	@memo = Hash.new(false)
+  	@maze = Maze.new(filename)
+  	greet if welcome
+  	@solution = []
   end
 
   def greet
@@ -23,21 +31,21 @@ class MazeSolver
   end
 
   def solver(method)
-	@root = Node.new(nil, @maze.start)
-	queue = [@root]
+  	@root = Node.new(nil, @maze.start)
+  	queue = [@root]
 
-	while !queue.empty?
-	  current_node = queue.send(method)
-	  if current_node.pos == @maze.finish
-		backtrack!(current_node)
-		break
-	  else
-		expand_at!(current_node).each do |child_node|
-		@memo[child_node.pos] = true
-		queue << child_node
-		end
-	  end
-	end
+  	while !queue.empty?
+  	  current_node = queue.send(method)
+  	  if current_node.pos == @maze.finish
+    		backtrack!(current_node)
+    		break
+  	  else
+    		expand_at!(current_node).each do |child_node|
+      		@memo[child_node.pos] = true
+      		queue << child_node
+    		end
+  	  end
+  	end
   end
 
   def clear
@@ -51,13 +59,25 @@ class MazeSolver
 	  current = current.parent
 	  @solution << current.pos 
 	end
-	@solution.pop  #without overwritting the "S" in maze
+	#@solution.pop  #without overwritting the "S" in maze
   end
 
   def print_solution
 	duplicate = @maze.dup
-	@solution.each do |pos|
-	  duplicate[pos] = 'X'
+	(0...@solution.length).each do |i|
+    next if @solution[i+1].nil?
+    delta = [@solution[i+1].first - @solution[i].first, 
+             @solution[i+1].last - @solution[i].last]
+    case delta
+    when [1, 0]  #down
+      duplicate[@solution[i]] = UP
+    when [-1, 0] # up
+      duplicate[@solution[i]] = DOWN
+    when [0, -1] #left
+      duplicate[@solution[i]] = RIGHT
+    when [0, 1] #right
+      duplicate[@solution[i]] = LEFT
+    end
 	end
 	duplicate.pp
   end
@@ -77,52 +97,56 @@ class MazeSolver
   end
 
   def in_memo?(pos)
-	return @memo[pos]
+	  return @memo[pos]
   end
 end
 
 class Node
+
   attr_accessor :parent,:children, :pos
+
   def initialize(parent,pos)
     @parent = parent
-	@pos = pos
-	@children =[]
+ 	  @pos = pos
+	  @children =[]
   end
 
   def add_node(node)
-	node.parent = self
-	@children << node
+	  node.parent = self
+	  @children << node
   end
 end
 
 class Maze
+
   attr_accessor :start, :finish, :maze
+
   def initialize(filename)
-	@filename = filename
-	@maze = File.readlines(@filename).map do |line|
-	  line.chomp.split('')
-	end
+  	@filename = filename
+  	@maze = File.readlines(@filename).map do |line|
+  	  line.chomp.split('')
+	  end
 	@maze.each_with_index do |array, row|
 	  array.each_with_index do |spot, col|
-		if spot == 'S'
-		  @start = [row,col]
-		elsif spot == 'E'
-		  @finish = [row,col]
-		end
+  		if spot == 'S'
+  		  @start = [row,col]
+  		elsif spot == 'E'
+  		  @finish = [row,col]
+  		end
 	  end
 	end
 
-	@height = @maze.length
-	@width = @maze[0].length
+  	@height = @maze.length
+  	@width = @maze[0].length
   end
 
   def dup
-	duplicate = Maze.new(@filename)
-	return duplicate
+  	duplicate = Maze.new(@filename)
+  	return duplicate
   end
 
   def [](pos)
-	return @maze[pos.first][pos.last]
+  	return @maze[pos.first][pos.last]
   end
 
   def []=(pos,val)
@@ -130,20 +154,26 @@ class Maze
   end
 
   def in_bound?(pos)
-	(0...@height).cover?(pos.first) && (0...@width).cover?(pos.last)
+	  (0...@height).cover?(pos.first) && (0...@width).cover?(pos.last)
   end
 
   def wall?(pos)
-	self[pos] == '*'
+	  self[pos] == '*'
   end
 
   def pp(descript = false)
-	puts "Start from #{@start} to #{@finish}" if descript
-	@maze.each do |row|
-	  puts row.join(" ")
-	end
-  	puts "\n"
-  end		
+	  puts "Start from #{@start} to #{@finish}" if descript
+    @maze.each do |row|
+      row.each do |grid|
+        if grid == "*"
+          print "  ".colorize(:background => :red)
+        else
+          print  (grid+" ").colorize({:color =>:blue,:background => :white, :bold => true})
+        end 
+      end
+      print "\n"
+    end
+  end
 end
 
  m = MazeSolver.new('maze1.txt',true)
