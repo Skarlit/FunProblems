@@ -1,4 +1,5 @@
 require 'debugger'
+require 'colorize'
 
 class Chamber
   attr_accessor :ix,:jx, :iy,:jy, :hole1, :hole2, :hole3, :hole4
@@ -37,8 +38,13 @@ class Maze
 
 
   def pp
-     print @maze.map { |row| row.join(" ")}.join("\n")
-     print "\n"
+     @maze.each do |row|
+      row.each do |grid|
+        print "  ".colorize(:background => :white) if grid == " "
+        print "  ".colorize(:background => :red) if grid == "*"
+      end
+      print "\n"
+    end
   end
 
   def recurse_slice(n = 1000)
@@ -136,6 +142,7 @@ class Maze
   def self.auto(width,height,slices, filename)
     a = Maze.new(width,height)
     a.recurse_slice(slices)
+    a.pp
     a.set_random_endpoint
     a.save(filename)
   end
@@ -144,4 +151,4 @@ end
 
 
 
-Maze.auto(50, 50, 1000, "maze_recurse_gen_50x50_randomized_start2")
+Maze.auto(50, 50, 1000, "maze_recurse_gen_30x30_randomized_start")
