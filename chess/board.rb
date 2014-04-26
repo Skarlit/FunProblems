@@ -41,7 +41,7 @@ class Board
     8.times { |i| @white_pieces << Pawn.new(:white, Pos.new(6,i), self) }
   ########################PLACE PIECES ###################################
   
-   (@black_pieces + @white_pieces).each { |piece| @board[piece.pos] = piece }
+   (@black_pieces + @white_pieces).each { |piece| self[piece.pos] = piece }
 
 
   #######################INIT  COLOR BOARD###############################

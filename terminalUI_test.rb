@@ -13,15 +13,25 @@ require 'io/wait'
 	def erase_display()  print "\e[2J"           end
 	def key_press
 	  system("stty raw -echo")  #raw mode on
-	  key = STDIN.getc.chr
+	  key = STDIN.getc
 	  system("stty -raw echo")  #raw mode off
 	  return key
 	end
-
-
 end
+
+include MyUI
 
 while 1
-	print key_press
+	key = key_press
+  if key.chr == 'q'
+  	puts ""
+  	break
+  end
+  if key.chr =="\n"
+  	print "\e[0;30;44"
+  end
+	print key
 end
-]
+
+print "\e[0;32;40"
+
