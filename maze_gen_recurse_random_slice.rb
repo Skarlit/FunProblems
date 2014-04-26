@@ -130,7 +130,7 @@ class Maze
 
   def save(filename)
     File.open(filename,'w') do |f|
-     f.puts @maze.map { |row| row.join(" ")}.join("\n")
+     f.puts @maze.map { |row| row.join("")}.join("\n")
     end
   end
 

@@ -176,7 +176,7 @@ class Maze
   end
 end
 
- m = MazeSolver.new('maze1.txt',true)
+ m = MazeSolver.new('maze_recurse_gen_30x30_randomized_start',true)
  m.dfs_solver
  m.print_solution
  m.clear
