@@ -1,0 +1,135 @@
+<html>
+  <head>
+  <script type="text/javascript" src="js/kinetic.js"></script>
+  <style>
+    .empty {
+       width: 100px;
+       height: 100px;
+       background-color: red;
+    }
+  </style>
+
+  <script> 
+  var time = 0 ;
+  var clock_switch = true;
+  </script>
+
+  </head>
+
+  <body>
+    <h2> Chess</h2>
+    <h2 id="coord"> </h2>
+
+    <h2 id="timer"> </h2>
+    <br> <button id="start">Start</button>  <button id="reset">Reset</button>
+    <button id="stop">Stop</button>
+    <div id="container"></div>
+    <script defer="defer">
+      var stage = new Kinetic.Stage({
+        container: 'container',
+        width: 800,
+        height: 800
+      });
+
+      var layer = new Kinetic.Layer();
+
+      var board = new Array(8);
+      for(var i=0; i < board.length; i++){
+        board[i] = new Array(8);
+      }
+
+      var toggle = false;
+      var black = 'black';
+      var white = 'white';
+
+      for(var i=0; i<8; i++ ){ 
+        for(var j=0; j<8; j++ ){
+          if(toggle){
+            board[i][j] = new Kinetic.Rect({
+                                x: i*100,
+                                y: j*100,
+                                width: 100,
+                                height: 100,
+                                fill: white,
+                                stroke: 'black',
+                                strokeWidth: 0});
+          }else{
+            board[i][j] = new Kinetic.Rect({
+                                x: i*100,
+                                y: j*100,
+                                width: 100,
+                                height: 100,
+                                fill: black,
+                                stroke: 'black',
+                                strokeWidth: 0});
+          }
+          toggle = !toggle
+        }
+        toggle = !toggle
+      }
+
+      // add the shape to the layer
+      for(var i=0; i<8; i++){
+        for(var j=0; j<8; j++){
+          layer.add(board[i][j])
+        }
+      }
+
+      layer_piece = new Kinetic.Layer();
+
+      var pawn = new Kinetic.Rect({
+                          x: 200+20,
+                          y: 200+20,
+                          width: 60,
+                          height: 60,
+                          fill: 'yellow',
+                          stroke: 'black',
+                          draggable: true,
+                          strokeWidth: 0});
+
+      layer.add(pawn);
+
+      stage.add(layer);
+    </script>
+
+    <script>
+      setInterval(function(){ 
+        if(clock_switch) {this.time += 1; } 
+        document.getElementById('timer').innerHTML = "Timer: " + time_parse(this.time);
+      }, 1000)
+
+      var handle = document.getElementById('my_draggable')
+      window.onmousemove=function(){
+        document.getElementById('coord').innerHTML = "X: " + event.clientX+
+        ", Y: " + event.clientY;
+      }
+
+      function time_parse(seconds){
+        var hr;
+        var min;
+        var sec;
+        hr = Math.floor(seconds / 3600);
+        min = Math.floor((seconds % 3600) / 60);
+        sec = seconds % 60;
+        if(hr < 10) { hr = "0" + hr;}
+        if(min < 10) { min = "0" + min;}
+        if(sec < 10) { sec = "0" + sec;}
+        t = ""+hr+":"+min+":"+sec;
+        return t;
+      }
+
+      document.getElementById('reset').onclick = function(){ 
+        time = 0;
+      };
+
+      document.getElementById('stop').onclick = function(){
+        clock_switch = false;
+      };
+
+      document.getElementById('start').onclick = function(){
+        clock_switch = true;
+      };
+    </script>
+
+  </body>
+</html>

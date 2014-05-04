@@ -59,7 +59,6 @@ class Maze
         end
       end
     end
-
   end
 
   def random_slice(chamber) #returns 4 sub chambers
@@ -78,44 +77,33 @@ class Maze
        j_slice = chamber.jx + rand(1...chamber.width)
      end
 
-     #slice
+     #slice horizontal
      (0..chamber.width).each do |del|
         @maze[i_slice][chamber.jx + del] = "*"
      end
+
+     #slice vertical
      (0..chamber.height).each do |del|
         @maze[chamber.ix + del][j_slice] = "*"
      end
 
-     #open wall
+     #open wall horizontal
      hole1 = rand(chamber.jx...j_slice)
-     # until chamber.hole1.nil? || chamber.hole1 != hole1
-     #   hole1 = rand((chamber.jx+1)...j_slice)
-     # end
-
      hole2 = rand((j_slice + 1)...chamber.jy)
-     # until chamber.hole2.nil? || chamber.hole2 != hole2
-     #   hole2 = rand((j_slice + 1)...chamber.width)
-     # end
-
-     hole3 = rand(chamber.ix...i_slice)
-     # until chamber.hole3.nil? || chamber.hole3 != hole3
-     #   hole3 = rand((chamber.jx + 1)...i_slice)
-     # end
-
-     hole4 = rand((i_slice+1)...chamber.iy)
-     # until chamber.hole4.nil? || chamber.hole4 != hole4
-     #   hole4 = rand((i_slice+1)...chamber.height)
-     # end
-
      @maze[i_slice][hole1] = " "  unless hole1.nil?
      @maze[i_slice][hole2] = " "  unless hole2.nil?
+
+     #open wall vertical
+     hole3 = rand(chamber.ix...i_slice)
+     hole4 = rand((i_slice+1)...chamber.iy)
      @maze[hole3][j_slice] = " "  unless hole3.nil?
      @maze[hole4][j_slice] = " "  unless hole4.nil?
 
 
-     #return new chambers
+     #return horizontal chambers
      c1 = Chamber.new(chamber.ix, chamber.jx, i_slice - 1, j_slice - 1)
      c2 = Chamber.new(chamber.ix, j_slice + 1, i_slice - 1, chamber.jy)
+
      c3 = Chamber.new(i_slice + 1, chamber.jx, chamber.iy, j_slice - 1)
      c4 = Chamber.new(i_slice + 1, j_slice + 1, chamber.iy, chamber.jy)
 
