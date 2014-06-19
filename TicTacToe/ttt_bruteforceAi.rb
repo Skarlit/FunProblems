@@ -1,4 +1,4 @@
-require './tic_tac_toe.rb'
+require './ttt.rb'
 require 'debugger'
 class TicTacToeNode
   attr_accessor :board, :mark, :children, :cost
@@ -8,12 +8,12 @@ class TicTacToeNode
     @mark = mark
     @opponent_mark = @@opponent_of[@mark]
     @cost = cost
+    @children = []
   end
 
  #general children
-  def children
+  def build_tree
     current_position = self.board
-    @children = []
     if not current_position.over?
       (0...3).each do |i|
         (0...3).each do |j|
@@ -26,7 +26,9 @@ class TicTacToeNode
         end
       end
     end
-    @children
+    @children.each do |child|
+      child.build_tree
+    end
   end
 
   def losing_node?(player = :o)
@@ -53,25 +55,8 @@ class TTTtree
     @player_mark = player_mark
     @root = TicTacToeNode.new(base_state, @player_mark)
     @current_node = @root
-    game_tree
+    @root.build_tree
     minimax_indexing(@root)  #index the nodes
-  end
-
-  def game_tree
-    #debugger
-    queue = [@root]
-    while !queue.empty?
-       current_node = queue.pop
-       #current_node.display
-       flag_1 = current_node.winning_node?(@player_mark)
-       flag_2 = current_node.losing_node?(@player_mark)
-       flag_3 = current_node.tied?
-       unless (flag_1 || flag_2 || flag_3 )
-           current_node.children.each do |child|
-             queue << child
-           end
-       end
-    end
   end
  
   #This uses minimax method to set the cost for each node
@@ -116,7 +101,7 @@ class SuperComputerPlayer < ComputerPlayer
     @mark = mark
     puts "remaining #{moves_left(game.board)} moves"
     if moves_left(game.board) == 9
-      return [0,0]
+      return [1,1]
     elsif moves_left(game.board) == 8
        if game.board.empty?([1,1])
         return [1,1] 
@@ -142,13 +127,13 @@ class SuperComputerPlayer < ComputerPlayer
   end
 
   def moves_left(board)
-     num = 0
-     (0...3).each do |i|
-        (0...3).each do |j|
-           num += 1 if board.empty?([i,j])
-         end
-      end
-      return num
+    num = 0
+    (0...3).each do |i|
+      (0...3).each do |j|
+         num += 1 if board.empty?([i,j])
+       end
+    end
+    return num
   end
   
   #update current_node to match game state
@@ -158,12 +143,12 @@ class SuperComputerPlayer < ComputerPlayer
   
   #find the child that matches the current game state and move to it
   def compare(game, current_node)
-     current_node.children.each do |child|
+    current_node.children.each do |child|
       if same?(child.board, game.board)
-         return child 
-       end
-     end
-     raise "can't find path to game_state" 
+        return child 
+      end
+    end
+    raise "can't find path to game_state" 
   end
    
   def same?(board1,board2)
@@ -197,36 +182,6 @@ class SuperComputerPlayer < ComputerPlayer
       end
   end
 
-  #COUNTING TOTAL LOSING NODE DOESN'T WORK FOR SOME REASON
-  # def self_move_dfs_heuristic
-  #   max = -1000
-  #   max_child = nil
-  #   @game_tree.current_node.children.each do |child|
-  #       max_child = child if dfs_heuristic(child) == 0      
-  #   end
-  #   #compare boards to find pos and update current_node in game_tree
-  #    (0...3).each do |i|
-  #      (0...3).each do |j|
-  #         if @game_tree.current_node.board[[i,j]] != max_child.board[[i,j]]
-  #               @game_tree.current_node = max_child
-  #               return [i,j]
-  #          end
-  #       end
-  #     end
-  # end
-
-  # def dfs_heuristic(current_node)
-  #   if current_node.board.over?
-  #     return 0 if current_node.winning_node?(@player_mark) == 2 
-  #     return 1 if current_node.losing_node?(@player_mark) == -2
-  #     return 0 if current_node.tied? == 0
-  #   end
-  #   sum = 0
-  #   current_node.children.each do |child|
-  #       sum += dfs_heuristic(child)       
-  #   end
-  #   return sum
-  # end
 end
 
 t = TTTtree.new(Board.new([[:o,nil,:o],[nil,:x,nil],[nil,nil,nil]]), :x)

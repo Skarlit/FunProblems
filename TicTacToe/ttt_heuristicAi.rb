@@ -226,8 +226,8 @@ class Player
   end
 end
 
-P1= Player.new
-P2= Player.new(true)
+# P1= Player.new
+# P2= Player.new(true)
 
-g=Game.new(P2,P1)
-g.play
+# g=Game.new(P2,P1)
+# g.play
