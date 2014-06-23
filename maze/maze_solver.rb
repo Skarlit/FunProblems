@@ -54,46 +54,46 @@ class MazeSolver
   end
 
   def backtrack!(finished_node)
-  current = finished_node
-  while current.pos != @maze.start
-    current = current.parent
-    @solution << current.pos 
-  end
+    current = finished_node
+    while current.pos != @maze.start
+      current = current.parent
+      @solution << current.pos 
+    end
   #@solution.pop  #without overwritting the "S" in maze
   end
 
   def print_solution
-  duplicate = @maze.dup
-  (0...@solution.length).each do |i|
-    next if @solution[i+1].nil?
-    delta = [@solution[i+1].first - @solution[i].first, 
-             @solution[i+1].last - @solution[i].last]
-    case delta
-    when [1, 0]  #down
-      duplicate[@solution[i]] = UP
-    when [-1, 0] # up
-      duplicate[@solution[i]] = DOWN
-    when [0, -1] #left
-      duplicate[@solution[i]] = RIGHT
-    when [0, 1] #right
-      duplicate[@solution[i]] = LEFT
+    duplicate = @maze.dup
+    (0...@solution.length).each do |i|
+      next if @solution[i+1].nil?
+      delta = [@solution[i+1].first - @solution[i].first, 
+               @solution[i+1].last - @solution[i].last]
+      case delta
+      when [1, 0]  #down
+        duplicate[@solution[i]] = UP
+      when [-1, 0] # up
+        duplicate[@solution[i]] = DOWN
+      when [0, -1] #left
+        duplicate[@solution[i]] = RIGHT
+      when [0, 1] #right
+        duplicate[@solution[i]] = LEFT
+      end
     end
-  end
-  duplicate.pp
+    duplicate.pp
   end
 
   def expand_at!(node)
-  i, j = node.pos.first, node.pos.last
-  directions = [[i+1,j],[i-1,j],[i,j+1],[i,j-1]]
-  expandable = []
-  directions.each do |dir|
-    if @maze.in_bound?(dir) && (not @maze.wall?(dir)) && (not in_memo?(dir))
-    child_node = Node.new(node,dir)
-    expandable << child_node
-    node.children << child_node
-    end
-    end
-  return expandable
+    i, j = node.pos.first, node.pos.last
+    directions = [[i+1,j],[i-1,j],[i,j+1],[i,j-1]]
+    expandable = []
+    directions.each do |dir|
+      if @maze.in_bound?(dir) && (not @maze.wall?(dir)) && (not in_memo?(dir))
+      child_node = Node.new(node,dir)
+      expandable << child_node
+      node.children << child_node
+      end
+      end
+    return expandable
   end
 
   def in_memo?(pos)
@@ -126,15 +126,15 @@ class Maze
     @maze = File.readlines(@filename).map do |line|
       line.chomp.split('')
     end
-  @maze.each_with_index do |array, row|
-    array.each_with_index do |spot, col|
-      if spot == 'S'
-        @start = [row,col]
-      elsif spot == 'E'
-        @finish = [row,col]
+    @maze.each_with_index do |array, row|
+      array.each_with_index do |spot, col|
+        if spot == 'S'
+          @start = [row,col]
+        elsif spot == 'E'
+          @finish = [row,col]
+        end
       end
     end
-  end
 
     @height = @maze.length
     @width = @maze[0].length
