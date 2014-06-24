@@ -93,8 +93,8 @@ end
 class SuperComputerPlayer < ComputerPlayer
 
   def initialize
-     super
-     @game_tree = nil
+    super
+    @game_tree = nil
   end
 
   def move(game, mark)
@@ -103,26 +103,26 @@ class SuperComputerPlayer < ComputerPlayer
     if moves_left(game.board) == 9
       return [1,1]
     elsif moves_left(game.board) == 8
-       if game.board.empty?([1,1])
+      if game.board.empty?([1,1])
         return [1,1] 
-       else
-         return [0,0]
-       end
+      else
+        return [0,0]
+      end
     elsif moves_left(game.board) == 7
-       if game.board.empty?([1,1])
-         return [1,1]
-       else
-         return [0,2]
-       end
+      if game.board.empty?([1,1])
+        return [1,1]
+      else
+        return [0,2]
+      end
     ############################################################
     #The first few moves can reduce search size by factor of 600 
     ############################################################
     elsif moves_left(game.board) == 6 || moves_left(game.board) == 5
-       @game_tree = TTTtree.new(game.board, @mark)
-       return self_move
+      @game_tree = TTTtree.new(game.board, @mark)
+      return self_move
     else
-       opponent_move(game)
-       return self_move
+      opponent_move(game)
+      return self_move
     end 
   end
 
@@ -131,14 +131,14 @@ class SuperComputerPlayer < ComputerPlayer
     (0...3).each do |i|
       (0...3).each do |j|
          num += 1 if board.empty?([i,j])
-       end
+      end
     end
     return num
   end
   
   #update current_node to match game state
   def opponent_move(game)
-     @game_tree.current_node = compare(game, @game_tree.current_node)
+    @game_tree.current_node = compare(game, @game_tree.current_node)
   end
   
   #find the child that matches the current game state and move to it
@@ -163,23 +163,23 @@ class SuperComputerPlayer < ComputerPlayer
   #find the child has max value, move current_node to that child 
   # return pos
   def self_move
-     max_child = nil
-     max_value = -1
-     @game_tree.current_node.children.each do |child|
-        if child.cost > max_value
-           max_child = child
-           max_value = child.cost
-        end
-     end
+    max_child = nil
+    max_value = -1
+    @game_tree.current_node.children.each do |child|
+      if child.cost > max_value
+        max_child = child
+        max_value = child.cost
+      end
+    end
      #compare boards to find pos and update current_node in game_tree
-     (0...3).each do |i|
-       (0...3).each do |j|
-          if @game_tree.current_node.board[[i,j]] != max_child.board[[i,j]]
-                @game_tree.current_node = max_child
-                return [i,j]
-           end
+    (0...3).each do |i|
+      (0...3).each do |j|
+        if @game_tree.current_node.board[[i,j]] != max_child.board[[i,j]]
+          @game_tree.current_node = max_child
+          return [i,j]
         end
       end
+    end
   end
 
 end
